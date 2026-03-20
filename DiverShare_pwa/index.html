@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveShare - 自驾游社交网络</title>
+    <meta name="description" content="分享你的自驾路线，发现别人的精彩旅程">
+    <meta name="theme-color" content="#2196F3">
+
+    <!-- PWA 必备 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Leaflet 地图 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 应用容器 -->
+    <div id="app">
+        <!-- 头部导航 -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-route"></i>
+                <span>DriveShare</span>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-view="home">
+                    <i class="fas fa-home"></i> <span>首页</span>
+                </button>
+                <button class="nav-btn" data-view="create">
+                    <i class="fas fa-plus-circle"></i> <span>创建路线</span>
+                </button>
+                <button class="nav-btn" data-view="profile">
+                    <i class="fas fa-user"></i> <span>我的</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- 主内容区 -->
+        <main id="main-content">
+            <!-- 首页视图 -->
+            <section id="home-view" class="view active">
+                <div class="filters">
+                    <select id="filter-category">
+                        <option value="all">全部分类</option>
+                        <option value="weekend">周末游</option>
+                        <option value="long">长途旅行</option>
+                        <option value="family">亲子游</option>
+                        <option value="adventure">探险路线</option>
+                    </select>
+                    <select id="filter-time">
+                        <option value="all">全部时间</option>
+                        <option value="1">1小时内</option>
+                        <option value="3">3小时内</option>
+                        <option value="6">6小时内</option>
+                    </select>
+                </div>
+                <div id="routes-list" class="routes-container">
+                    <!-- 路线列表会在这里动态生成 -->
+                </div>
+            </section>
+
+            <!-- 创建路线视图 -->
+            <section id="create-view" class="view">
+                <form id="route-form">
+                    <div class="form-group">
+                        <label>路线名称</label>
+                        <input type="text" id="route-name" required placeholder="例如：周末海岛之旅">
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="route-category" required>
+                            <option value="weekend">周末游</option>
+                            <option value="long">长途旅行</option>
+                            <option value="family">亲子游</option>
+                            <option value="adventure">探险路线</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>起点</label>
+                        <input type="text" id="route-start" required placeholder="点击地图选择起点">
+                        <button type="button" id="pick-start" class="map-pick-btn">📍 在地图上选择</button>
+                    </div>
+                    <div class="form-group">
+                        <label>终点</label>
+                        <input type="text" id="route-end" required placeholder="点击地图选择终点">
+                        <button type="button" id="pick-end" class="map-pick-btn">📍 在地图上选择</button>
+                    </div>
+                    <div class="form-group">
+                        <label>描述</label>
+                        <textarea id="route-description" rows="3" placeholder="分享你的路线故事、注意事项..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>预计耗时（小时）</label>
+                        <input type="number" id="route-duration" step="0.5" min="0.5" max="48">
+                    </div>
+                    <div id="map-container" style="height: 300px; margin: 10px 0; border-radius: 8px;"></div>
+                    <button type="submit" class="btn-primary">发布路线</button>
+                </form>
+            </section>
+
+            <!-- 个人中心视图 -->
+            <section id="profile-view" class="view">
+                <div class="profile-header">
+                    <div class="avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3>我的自驾游</h3>
+                        <p>已发布 <span id="my-routes-count">0</span> 条路线</p>
+                    </div>
+                </div>
+                <div id="my-routes-list" class="routes-container">
+                    <!-- 我的路线列表 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 路线详情弹窗 -->
+        <div id="route-detail-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal">&times;</button>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+
+        <!-- 安装提示 -->
+        <div id="install-prompt" class="install-prompt">
+            <p>安装应用到主屏幕，离线也能使用！</p>
+            <button id="install-btn" class="btn-install">安装</button>
+            <button id="dismiss-install" class="btn-dismiss">关闭</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
